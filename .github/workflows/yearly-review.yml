@@ -1,0 +1,27 @@
+name: 年度档案回顾提醒
+
+on:
+  schedule:
+    # 每年 10 月 1 日 11:00（北京时间）= UTC 03:00；想改日期就改「日 月」两位
+    - cron: '0 3 1 10 *'
+  workflow_dispatch: {}
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: 创建年度回顾 Issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TITLE: '📅 年度档案回顾：今年更新你的 AI 个人档案了吗？'
+          BODY: |
+            又过去一年了。建议花 15 分钟：
+
+            1. 过一遍 `ai-profile.md`：称呼、坐标、职业、兴趣、雷区
+            2. 确认「正在学」「我正在做什么」还准不准
+            3. 更新文件头的版本号，并在 `CHANGELOG.md` 记一笔
+
+            检查完把这个 Issue 关掉即可。也可以随时在 Actions 页手动运行本工作流。
+        run: gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body "$BODY"
